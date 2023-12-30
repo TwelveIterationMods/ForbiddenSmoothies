@@ -106,7 +106,7 @@ public class PrinterMenu extends AbstractContainerMenu implements InputLockableM
 
     @Override
     public int getEnergyCapacity() {
-        return data.get(PrinterBlockEntity.DATA_ENERGY_TOTAL);
+        return data.get(PrinterBlockEntity.DATA_MAX_ENERGY);
     }
 
     @Override

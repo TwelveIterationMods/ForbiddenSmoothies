@@ -40,7 +40,7 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     public static final int DATA_MAX_PROGRESS = 1;
     public static final int DATA_LOCKED_INPUTS = 2;
     public static final int DATA_ENERGY = 3;
-    public static final int DATA_ENERGY_TOTAL = 4;
+    public static final int DATA_MAX_ENERGY = 4;
     public static final int DATA_ENERGY_CONSUMPTION = 5;
 
     private final RandomSource randomSource = RandomSource.create();
@@ -91,18 +91,18 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     };
 
     private boolean lockedInputs;
-    private int printingProgress;
-    private int printingTotalTime;
+    private int progress;
+    private int maxProgress;
     private int energyCostPerTick;
 
     protected final ContainerData dataAccess = new ContainerData() {
         public int get(int i) {
             return switch (i) {
-                case DATA_PROGRESS -> PrinterBlockEntity.this.printingProgress;
-                case DATA_MAX_PROGRESS -> PrinterBlockEntity.this.printingTotalTime;
+                case DATA_PROGRESS -> PrinterBlockEntity.this.progress;
+                case DATA_MAX_PROGRESS -> PrinterBlockEntity.this.maxProgress;
                 case DATA_LOCKED_INPUTS -> PrinterBlockEntity.this.lockedInputs ? 1 : 0;
                 case DATA_ENERGY -> PrinterBlockEntity.this.energyStorage.getEnergy();
-                case DATA_ENERGY_TOTAL -> PrinterBlockEntity.this.energyStorage.getCapacity();
+                case DATA_MAX_ENERGY -> PrinterBlockEntity.this.energyStorage.getCapacity();
                 case DATA_ENERGY_CONSUMPTION -> energyCostPerTick;
                 default -> 0;
             };
@@ -110,8 +110,8 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
 
         public void set(int i, int value) {
             switch (i) {
-                case DATA_PROGRESS -> PrinterBlockEntity.this.printingProgress = value;
-                case DATA_MAX_PROGRESS -> PrinterBlockEntity.this.printingTotalTime = value;
+                case DATA_PROGRESS -> PrinterBlockEntity.this.progress = value;
+                case DATA_MAX_PROGRESS -> PrinterBlockEntity.this.maxProgress = value;
                 case DATA_LOCKED_INPUTS -> PrinterBlockEntity.this.lockedInputs = value != 0;
                 case DATA_ENERGY -> PrinterBlockEntity.this.energyStorage.setEnergy(value);
             }
@@ -147,8 +147,8 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
 
         container.deserialize(tag.getCompound("Items"));
         energyStorage.deserialize(tag.get("Energy"));
-        printingProgress = tag.getInt("PrintTime");
-        printingTotalTime = tag.getInt("PrintTimeTotal");
+        progress = tag.getInt("Progress");
+        maxProgress = tag.getInt("MaxProgress");
         lockedInputs = tag.getBoolean("LockedInputs");
     }
 
@@ -156,8 +156,8 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         super.saveAdditional(tag);
         tag.put("Items", container.serialize());
         tag.put("Energy", energyStorage.serialize());
-        tag.putInt("PrintTime", this.printingProgress);
-        tag.putInt("PrintTimeTotal", this.printingTotalTime);
+        tag.putInt("Progress", this.progress);
+        tag.putInt("MaxProgress", this.maxProgress);
         tag.putBoolean("LockedInputs", this.lockedInputs);
     }
 
@@ -173,14 +173,14 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
 
     public void serverTick() {
         final var recipe = selectRecipe(randomSource).orElse(null);
-        printingTotalTime = getTotalProcessingTicks();
+        maxProgress = getTotalProcessingTicks();
         energyCostPerTick = recipe != null ? determineEnergyCostPerTick() : 0;
         if (recipe != null && canFitRecipeResults(recipe) && energyStorage.drain(energyCostPerTick, true) >= energyCostPerTick) {
-            printingProgress++;
+            progress++;
             energyStorage.drain(energyCostPerTick, false);
 
-            if (printingProgress >= printingTotalTime) {
-                printingProgress = 0;
+            if (progress >= maxProgress) {
+                progress = 0;
                 final var output = recipe.assemble(recipeInputContainer, RegistryAccess.EMPTY);
                 for (final var ingredient : recipe.getIngredients()) {
                     for (int i = 0; i < recipeInputContainer.getContainerSize(); i++) {
@@ -194,7 +194,7 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
                 ContainerUtils.insertItemStacked(outputContainer, output, false);
             }
         } else {
-            printingProgress = 0;
+            progress = 0;
             energyCostPerTick = 0;
         }
     }

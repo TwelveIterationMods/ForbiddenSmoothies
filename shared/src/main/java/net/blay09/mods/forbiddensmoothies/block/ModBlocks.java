@@ -14,7 +14,7 @@ public class ModBlocks {
 
     public static void initialize(BalmBlocks blocks) {
         blocks.register(() -> printer = new PrinterBlock(), () -> itemBlock(printer), id("printer"));
-        blocks.register(() -> blender = new PrinterBlock(), () -> itemBlock(blender), id("blender"));
+        blocks.register(() -> blender = new BlenderBlock(), () -> itemBlock(blender), id("blender"));
     }
 
     private static BlockItem itemBlock(Block block) {
