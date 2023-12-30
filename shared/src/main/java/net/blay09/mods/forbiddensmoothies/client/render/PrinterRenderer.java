@@ -6,9 +6,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 
-public class WorkbenchRenderer implements BlockEntityRenderer<PrinterBlockEntity> {
+public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> {
 
-    public WorkbenchRenderer(BlockEntityRendererProvider.Context context) {
+    public PrinterRenderer(BlockEntityRendererProvider.Context context) {
     }
 
     @Override

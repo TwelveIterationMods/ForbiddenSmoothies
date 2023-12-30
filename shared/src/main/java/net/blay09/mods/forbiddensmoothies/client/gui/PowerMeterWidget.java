@@ -1,7 +1,7 @@
 package net.blay09.mods.forbiddensmoothies.client.gui;
 
 import net.blay09.mods.forbiddensmoothies.ForbiddenSmoothies;
-import net.blay09.mods.forbiddensmoothies.menu.PrinterMenu;
+import net.blay09.mods.forbiddensmoothies.menu.EnergizedMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -13,9 +13,9 @@ import net.minecraft.resources.ResourceLocation;
 
 public class PowerMeterWidget extends AbstractWidget {
     private static final ResourceLocation guiTexture = new ResourceLocation(ForbiddenSmoothies.MOD_ID, "textures/gui/printer.png");
-    private final PrinterMenu menu;
+    private final EnergizedMenu menu;
 
-    public PowerMeterWidget(int x, int y, int width, int height, PrinterMenu menu) {
+    public PowerMeterWidget(int x, int y, int width, int height, EnergizedMenu menu) {
         super(x, y, width, height, Component.empty());
         this.menu = menu;
     }

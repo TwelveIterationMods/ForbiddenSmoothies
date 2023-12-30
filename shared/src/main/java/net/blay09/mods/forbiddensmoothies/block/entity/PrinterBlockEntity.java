@@ -36,8 +36,8 @@ import java.util.Optional;
 
 public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvider, BalmContainerProvider, BalmEnergyStorageProvider {
 
-    public static final int DATA_PRINTING_PROGRESS = 0;
-    public static final int DATA_PRINTING_TOTAL_TIME = 1;
+    public static final int DATA_PROGRESS = 0;
+    public static final int DATA_MAX_PROGRESS = 1;
     public static final int DATA_LOCKED_INPUTS = 2;
     public static final int DATA_ENERGY = 3;
     public static final int DATA_ENERGY_TOTAL = 4;
@@ -98,8 +98,8 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     protected final ContainerData dataAccess = new ContainerData() {
         public int get(int i) {
             return switch (i) {
-                case DATA_PRINTING_PROGRESS -> PrinterBlockEntity.this.printingProgress;
-                case DATA_PRINTING_TOTAL_TIME -> PrinterBlockEntity.this.printingTotalTime;
+                case DATA_PROGRESS -> PrinterBlockEntity.this.printingProgress;
+                case DATA_MAX_PROGRESS -> PrinterBlockEntity.this.printingTotalTime;
                 case DATA_LOCKED_INPUTS -> PrinterBlockEntity.this.lockedInputs ? 1 : 0;
                 case DATA_ENERGY -> PrinterBlockEntity.this.energyStorage.getEnergy();
                 case DATA_ENERGY_TOTAL -> PrinterBlockEntity.this.energyStorage.getCapacity();
@@ -110,8 +110,8 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
 
         public void set(int i, int value) {
             switch (i) {
-                case DATA_PRINTING_PROGRESS -> PrinterBlockEntity.this.printingProgress = value;
-                case DATA_PRINTING_TOTAL_TIME -> PrinterBlockEntity.this.printingTotalTime = value;
+                case DATA_PROGRESS -> PrinterBlockEntity.this.printingProgress = value;
+                case DATA_MAX_PROGRESS -> PrinterBlockEntity.this.printingTotalTime = value;
                 case DATA_LOCKED_INPUTS -> PrinterBlockEntity.this.lockedInputs = value != 0;
                 case DATA_ENERGY -> PrinterBlockEntity.this.energyStorage.setEnergy(value);
             }

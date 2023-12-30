@@ -11,7 +11,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.Slot;
 
 public class PrinterScreen extends AbstractContainerScreen<PrinterMenu> {
 
@@ -41,7 +40,7 @@ public class PrinterScreen extends AbstractContainerScreen<PrinterMenu> {
         guiGraphics.setColor(1f, 1f, 1f, 1f);
         guiGraphics.blit(guiTexture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
-        var progress = this.menu.getPrintProgress();
+        var progress = this.menu.getProgress();
         guiGraphics.blit(guiTexture, leftPos + 74, topPos + 56, 176, 60, 28, (int) (28 * progress));
     }
 

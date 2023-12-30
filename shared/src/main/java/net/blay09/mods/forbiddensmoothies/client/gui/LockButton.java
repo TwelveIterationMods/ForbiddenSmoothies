@@ -1,6 +1,7 @@
 package net.blay09.mods.forbiddensmoothies.client.gui;
 
 import net.blay09.mods.forbiddensmoothies.ForbiddenSmoothies;
+import net.blay09.mods.forbiddensmoothies.menu.InputLockableMenu;
 import net.blay09.mods.forbiddensmoothies.menu.PrinterMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -10,9 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 public class LockButton extends Button {
     private static final ResourceLocation guiTexture = new ResourceLocation(ForbiddenSmoothies.MOD_ID, "textures/gui/printer.png");
 
-    private final PrinterMenu menu;
+    private final InputLockableMenu menu;
 
-    public LockButton(int x, int y, int width, int height, OnPress onPress, PrinterMenu menu) {
+    public LockButton(int x, int y, int width, int height, OnPress onPress, InputLockableMenu menu) {
         super(x, y, width, height, Component.translatable("gui.forbiddensmoothies.lockButton"), onPress, DEFAULT_NARRATION);
         this.menu = menu;
     }

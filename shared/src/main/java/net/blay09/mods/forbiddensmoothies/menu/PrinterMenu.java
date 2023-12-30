@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 
-public class PrinterMenu extends AbstractContainerMenu {
+public class PrinterMenu extends AbstractContainerMenu implements InputLockableMenu, EnergizedMenu {
 
     private final Player player;
     private final Container container;
@@ -85,30 +85,36 @@ public class PrinterMenu extends AbstractContainerMenu {
         return itemStack;
     }
 
-    public float getPrintProgress() {
-        return data.get(PrinterBlockEntity.DATA_PRINTING_PROGRESS) / (float) data.get(PrinterBlockEntity.DATA_PRINTING_TOTAL_TIME);
+    public float getProgress() {
+        return data.get(PrinterBlockEntity.DATA_PROGRESS) / (float) data.get(PrinterBlockEntity.DATA_MAX_PROGRESS);
     }
 
+    @Override
     public boolean isLockedInputs() {
         return data.get(PrinterBlockEntity.DATA_LOCKED_INPUTS) != 0;
     }
 
+    @Override
     public void setLockedInputs(boolean locked) {
         setData(PrinterBlockEntity.DATA_LOCKED_INPUTS, locked ? 1 : 0);
     }
 
+    @Override
     public int getEnergyStored() {
         return data.get(PrinterBlockEntity.DATA_ENERGY);
     }
 
+    @Override
     public int getEnergyCapacity() {
         return data.get(PrinterBlockEntity.DATA_ENERGY_TOTAL);
     }
 
+    @Override
     public float getEnergyPercentage() {
         return getEnergyStored() / (float) getEnergyCapacity();
     }
 
+    @Override
     public int getEnergyPerTick() {
         return data.get(PrinterBlockEntity.DATA_ENERGY_CONSUMPTION);
     }

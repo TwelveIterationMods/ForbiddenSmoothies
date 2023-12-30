@@ -15,8 +15,8 @@ public class ModRecipes {
     public static RecipeType<PrinterRecipe> printerRecipeType;
     public static RecipeSerializer<PrinterRecipe> printerRecipeSerializer;
 
-    public static RecipeType<PrinterRecipe> blenderRecipeType;
-    public static RecipeSerializer<PrinterRecipe> blenderRecipeSerializer;
+    public static RecipeType<BlenderRecipe> blenderRecipeType;
+    public static RecipeSerializer<BlenderRecipe> blenderRecipeSerializer;
 
     public static void initialize(BalmRecipes registry) {
         registry.registerRecipeType(() -> printerRecipeType = new RecipeType<>() {
@@ -33,6 +33,6 @@ public class ModRecipes {
                         return BLENDER_RECIPE_GROUP;
                     }
                 },
-                () -> blenderRecipeSerializer = new PrinterRecipe.Serializer(), BLENDER_RECIPE_TYPE);
+                () -> blenderRecipeSerializer = new BlenderRecipe.Serializer(), BLENDER_RECIPE_TYPE);
     }
 }

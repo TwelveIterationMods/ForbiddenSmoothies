@@ -1,5 +1,6 @@
 package net.blay09.mods.forbiddensmoothies.network;
 
+import net.blay09.mods.forbiddensmoothies.menu.InputLockableMenu;
 import net.blay09.mods.forbiddensmoothies.menu.PrinterMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,10 +24,10 @@ public class SetInputLockMessage {
     }
 
     public static void handle(ServerPlayer player, SetInputLockMessage message) {
-        if (!(player.containerMenu instanceof PrinterMenu printerMenu)) {
+        if (!(player.containerMenu instanceof InputLockableMenu menu)) {
             return;
         }
 
-        printerMenu.setLockedInputs(message.locked);
+        menu.setLockedInputs(message.locked);
     }
 }

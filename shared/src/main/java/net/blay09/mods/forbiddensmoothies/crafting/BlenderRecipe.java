@@ -8,20 +8,22 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.random.Weight;
+import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
-public class BlenderRecipe implements Recipe<Container> {
+public class BlenderRecipe implements Recipe<Container>, WeightedEntry {
 
     private final ResourceLocation id;
     private final ItemStack resultItem;
     private final NonNullList<Ingredient> ingredients;
-    private final int weight;
+    private final Weight weight;
 
-    public BlenderRecipe(ResourceLocation id, ItemStack resultItem, NonNullList<Ingredient> ingredients, int weight) {
+    public BlenderRecipe(ResourceLocation id, ItemStack resultItem, NonNullList<Ingredient> ingredients, Weight weight) {
         this.id = id;
         this.resultItem = resultItem;
         this.ingredients = ingredients;
@@ -32,11 +34,15 @@ public class BlenderRecipe implements Recipe<Container> {
     public boolean matches(Container container, Level level) {
         final var stackedContents = new StackedContents();
         int foundInputs = 0;
-        for (int i = 0; i < container.getContainerSize(); i++) {
-            ItemStack itemStack = container.getItem(i);
-            if (!itemStack.isEmpty()) {
-                foundInputs++;
-                stackedContents.accountStack(itemStack, 1);
+        for (int i = 0; i < ingredients.size(); i++) {
+            final var ingredient = ingredients.get(i);
+            for (int j = 0; j < container.getContainerSize(); j++) {
+                final var itemStack = container.getItem(j);
+                if (ingredient.test(itemStack)) {
+                    foundInputs++;
+                    stackedContents.accountStack(itemStack, 1);
+                    break;
+                }
             }
         }
         return foundInputs == ingredients.size() && stackedContents.canCraft(this, null);
@@ -64,14 +70,23 @@ public class BlenderRecipe implements Recipe<Container> {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.printerRecipeSerializer;
+        return ModRecipes.blenderRecipeSerializer;
     }
 
     @Override
     public RecipeType<?> getType() {
-        return ModRecipes.printerRecipeType;
+        return ModRecipes.blenderRecipeType;
     }
 
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    @Override
+    public Weight getWeight() {
+        return weight;
+    }
 
     static class Serializer implements RecipeSerializer<BlenderRecipe> {
 
@@ -79,12 +94,12 @@ public class BlenderRecipe implements Recipe<Container> {
         public BlenderRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {
             final var ingredients = itemsFromJson(GsonHelper.getAsJsonArray(jsonObject, "ingredients"));
             if (ingredients.isEmpty()) {
-                throw new JsonParseException("No ingredients for printer recipe");
+                throw new JsonParseException("No ingredients for blender recipe");
             } else if (ingredients.size() > 4) {
-                throw new JsonParseException("Too many ingredients for printer recipe");
+                throw new JsonParseException("Too many ingredients for blender recipe");
             } else {
                 final var resultItem = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(jsonObject, "result"));
-                final var weight = GsonHelper.getAsInt(jsonObject, "weight", 1);
+                final var weight = Weight.of(GsonHelper.getAsInt(jsonObject, "weight", 1));
                 return new BlenderRecipe(id, resultItem, ingredients, weight);
             }
         }
@@ -92,7 +107,7 @@ public class BlenderRecipe implements Recipe<Container> {
         private static NonNullList<Ingredient> itemsFromJson(JsonArray jsonArray) {
             NonNullList<Ingredient> ingredients = NonNullList.create();
 
-            for(int i = 0; i < jsonArray.size(); ++i) {
+            for (int i = 0; i < jsonArray.size(); ++i) {
                 Ingredient ingredient = Ingredient.fromJson(jsonArray.get(i), false);
                 if (!ingredient.isEmpty()) {
                     ingredients.add(ingredient);
@@ -111,7 +126,7 @@ public class BlenderRecipe implements Recipe<Container> {
                 ingredients.add(Ingredient.fromNetwork(buf));
             }
             final var weight = buf.readVarInt();
-            return new BlenderRecipe(id, resultItem, ingredients, weight);
+            return new BlenderRecipe(id, resultItem, ingredients, Weight.of(weight));
         }
 
         @Override
@@ -121,7 +136,7 @@ public class BlenderRecipe implements Recipe<Container> {
             for (Ingredient ingredient : recipe.ingredients) {
                 ingredient.toNetwork(buf);
             }
-            buf.writeVarInt(recipe.weight);
+            buf.writeVarInt(recipe.weight.asInt());
         }
     }
 }
