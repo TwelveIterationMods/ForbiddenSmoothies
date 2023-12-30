@@ -1,6 +1,6 @@
 # Forbidden Smoothies
 
-Minecraft Mod.
+Minecraft Mod. Adds a printer that creates resources out of input items such as dye, as well as a blender to break items down into resources.
 
 - [Modpack Permissions](https://mods.twelveiterations.com/permissions)
 
