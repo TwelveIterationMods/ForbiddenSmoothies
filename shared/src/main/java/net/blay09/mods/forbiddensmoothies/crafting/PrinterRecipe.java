@@ -34,13 +34,15 @@ public class PrinterRecipe implements Recipe<Container>, WeightedEntry {
     public boolean matches(Container container, Level level) {
         final var stackedContents = new StackedContents();
         int foundInputs = 0;
+        final var used = new int[container.getContainerSize()];
         for (int i = 0; i < ingredients.size(); i++) {
             final var ingredient = ingredients.get(i);
             for (int j = 0; j < container.getContainerSize(); j++) {
                 final var itemStack = container.getItem(j);
-                if (ingredient.test(itemStack)) {
+                if (ingredient.test(itemStack) && used[j] < itemStack.getCount()) { // TODO this should keep track of what's already been used, otherwise it will "reuse" inputs
                     foundInputs++;
                     stackedContents.accountStack(itemStack, 1);
+                    used[j]++;
                     break;
                 }
             }
@@ -95,8 +97,6 @@ public class PrinterRecipe implements Recipe<Container>, WeightedEntry {
             final var ingredients = itemsFromJson(GsonHelper.getAsJsonArray(jsonObject, "ingredients"));
             if (ingredients.isEmpty()) {
                 throw new JsonParseException("No ingredients for printer recipe");
-            } else if (ingredients.size() > 9) {
-                throw new JsonParseException("Too many ingredients for printer recipe");
             } else {
                 final var resultItem = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(jsonObject, "result"));
                 final var weight = Weight.of(GsonHelper.getAsInt(jsonObject, "weight", 1));

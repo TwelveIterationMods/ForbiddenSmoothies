@@ -95,8 +95,6 @@ public class BlenderRecipe implements Recipe<Container>, WeightedEntry {
             final var ingredients = itemsFromJson(GsonHelper.getAsJsonArray(jsonObject, "ingredients"));
             if (ingredients.isEmpty()) {
                 throw new JsonParseException("No ingredients for blender recipe");
-            } else if (ingredients.size() > 9) {
-                throw new JsonParseException("Too many ingredients for blender recipe");
             } else {
                 final var resultItem = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(jsonObject, "result"));
                 final var weight = Weight.of(GsonHelper.getAsInt(jsonObject, "weight", 1));
