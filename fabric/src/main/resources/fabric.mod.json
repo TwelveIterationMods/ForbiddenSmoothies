@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "forbiddensmoothies",
+  "version": "${version}",
+
+  "name": "Forbidden Smoothies",
+  "description": "",
+  "authors": [
+    "BlayTheNinth"
+  ],
+  "contact": {
+    "homepage": "https://mods.twelveiterations.com/mc/forbiddensmoothies",
+    "sources": "https://github.com/TwelveIterationMods/ForbiddenSmoothies",
+    "issues": "https://github.com/TwelveIterationMods/ForbiddenSmoothies/issues"
+  },
+
+  "license": "All Rights Reserved",
+  "icon": "forbiddensmoothies.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.blay09.mods.forbiddensmoothies.fabric.FabricForbiddenSmoothies"
+    ],
+    "client": [
+      "net.blay09.mods.forbiddensmoothies.fabric.client.FabricForbiddenSmoothiesClient"
+    ],
+    "modmenu": [
+      "net.blay09.mods.forbiddensmoothies.fabric.compat.ModMenuIntegration"
+    ],
+    "fabric-datagen": [
+      "net.blay09.mods.forbiddensmoothies.fabric.datagen.ModDataGenerator"
+    ]
+  },
+  "mixins": [
+  ],
+  "depends": {
+    "balm-fabric": ">=7.0.0",
+    "fabricloader": ">=0.14.21",
+    "fabric-api": "*",
+    "minecraft": ">=1.20",
+    "java": ">=17"
+  },
+  "suggests": {
+    "modmenu": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/VAfZ2Nau6j"
+      }
+    }
+  }
+}

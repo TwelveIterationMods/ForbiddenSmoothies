@@ -1,0 +1,12 @@
+{
+  "type": "forbiddensmoothies:printer",
+  "ingredients": [
+    {
+      "item": "minecraft:red_dye"
+    }
+  ],
+  "result": {
+    "item": "minecraft:redstone",
+    "count": 2
+  }
+}

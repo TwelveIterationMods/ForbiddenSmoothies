@@ -1,0 +1,11 @@
+{
+  "type": "forbiddensmoothies:printer",
+  "ingredients": [
+    {
+      "item": "minecraft:green_dye"
+    }
+  ],
+  "result": {
+    "item": "minecraft:emerald"
+  }
+}

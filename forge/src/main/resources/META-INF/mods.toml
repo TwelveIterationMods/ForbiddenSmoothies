@@ -1,0 +1,34 @@
+modLoader="javafml"
+loaderVersion="${forge_loader_version_range}"
+license="All rights reserved"
+issueTrackerURL="https://github.com/TwelveIterationMods/ForbiddenSmoothies/issues"
+
+[[mods]]
+modId="forbiddensmoothies"
+version="${mod_version}"
+displayName="Forbidden Smoothies"
+displayURL="https://mods.twelveiterations.com/mc/forbidden-smoothies"
+logoFile="forbiddensmoothies.png"
+credits="BlayTheNinth"
+authors="BlayTheNinth"
+description='''
+'''
+
+[[dependencies.forbiddensmoothies]]
+    modId="forge"
+    mandatory=true
+    versionRange="${forge_version_range}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.forbiddensmoothies]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.forbiddensmoothies]]
+    modId="balm"
+    mandatory=true
+    versionRange="${balm_version_range}"
+    ordering="NONE"
+    side="BOTH"

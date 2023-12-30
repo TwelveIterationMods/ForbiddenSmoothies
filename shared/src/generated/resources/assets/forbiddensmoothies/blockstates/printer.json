@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "forbiddensmoothies:block/printer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "forbiddensmoothies:block/printer"
+    },
+    "facing=south": {
+      "model": "forbiddensmoothies:block/printer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "forbiddensmoothies:block/printer",
+      "y": 270
+    }
+  }
+}

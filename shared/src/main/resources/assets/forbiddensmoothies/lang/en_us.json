@@ -1,0 +1,11 @@
+{
+  "block.forbiddensmoothies.blender": "Blender",
+  "block.forbiddensmoothies.printer": "Printer",
+  "container.forbiddensmoothies.blender": "Blender",
+  "container.forbiddensmoothies.printer": "Printer",
+  "itemGroup.forbiddensmoothies.forbiddensmoothies": "Forbidden Smoothies",
+  "gui.forbiddensmoothies.lockButton": "Toggle Input Lock",
+  "tooltip.forbiddensmoothies.energyStored": "%d FE",
+  "tooltip.forbiddensmoothies.energyConsumed": "Consuming %d FE/t",
+  "config.forbiddensmoothies": "Forbidden Smoothies"
+}

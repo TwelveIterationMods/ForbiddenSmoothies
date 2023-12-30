@@ -1,0 +1,15 @@
+{
+  "type": "forbiddensmoothies:printer",
+  "ingredients": [
+    {
+      "item": "minecraft:red_dye"
+    },
+    {
+      "item": "minecraft:green_dye"
+    }
+  ],
+  "result": {
+    "item": "minecraft:magma_cream"
+  },
+  "weight": 2
+}
