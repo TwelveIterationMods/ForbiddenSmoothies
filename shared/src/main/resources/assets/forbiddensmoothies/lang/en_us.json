@@ -5,6 +5,8 @@
   "container.forbiddensmoothies.printer": "Printer",
   "itemGroup.forbiddensmoothies.forbiddensmoothies": "Forbidden Smoothies",
   "gui.forbiddensmoothies.lockButton": "Toggle Input Lock",
+  "tooltip.forbiddensmoothies.lockInputs": "Lock Input Slots",
+  "tooltip.forbiddensmoothies.unlockInputs": "Unlock Input Slots",
   "tooltip.forbiddensmoothies.energyStored": "%d FE",
   "tooltip.forbiddensmoothies.energyConsumed": "Consuming %d FE/t",
   "config.forbiddensmoothies": "Forbidden Smoothies"

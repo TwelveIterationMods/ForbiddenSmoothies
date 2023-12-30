@@ -2,7 +2,7 @@ package net.blay09.mods.forbiddensmoothies.client.gui.screen;
 
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.forbiddensmoothies.ForbiddenSmoothies;
-import net.blay09.mods.forbiddensmoothies.client.gui.LockButton;
+import net.blay09.mods.forbiddensmoothies.client.gui.InputLockButton;
 import net.blay09.mods.forbiddensmoothies.client.gui.PowerMeterWidget;
 import net.blay09.mods.forbiddensmoothies.menu.PrinterMenu;
 import net.blay09.mods.forbiddensmoothies.network.SetInputLockMessage;
@@ -26,7 +26,7 @@ public class PrinterScreen extends AbstractContainerScreen<PrinterMenu> {
     protected void init() {
         super.init();
 
-        final var lockButton = new LockButton(leftPos + 7, topPos + 17, 20, 20, button -> {
+        final var lockButton = new InputLockButton(leftPos + 7, topPos + 17, 20, 20, button -> {
             Balm.getNetworking().sendToServer(new SetInputLockMessage(!menu.isLockedInputs()));
             menu.setLockedInputs(!menu.isLockedInputs());
         }, menu);

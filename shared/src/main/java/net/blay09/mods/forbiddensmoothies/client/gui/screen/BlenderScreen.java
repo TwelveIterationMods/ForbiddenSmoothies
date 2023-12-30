@@ -2,17 +2,15 @@ package net.blay09.mods.forbiddensmoothies.client.gui.screen;
 
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.forbiddensmoothies.ForbiddenSmoothies;
-import net.blay09.mods.forbiddensmoothies.client.gui.LockButton;
+import net.blay09.mods.forbiddensmoothies.client.gui.InputLockButton;
 import net.blay09.mods.forbiddensmoothies.client.gui.PowerMeterWidget;
 import net.blay09.mods.forbiddensmoothies.menu.BlenderMenu;
-import net.blay09.mods.forbiddensmoothies.menu.PrinterMenu;
 import net.blay09.mods.forbiddensmoothies.network.SetInputLockMessage;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.Slot;
 
 public class BlenderScreen extends AbstractContainerScreen<BlenderMenu> {
 
@@ -28,7 +26,7 @@ public class BlenderScreen extends AbstractContainerScreen<BlenderMenu> {
     protected void init() {
         super.init();
 
-        final var lockButton = new LockButton(leftPos + 7, topPos + 17, 20, 20, button -> {
+        final var lockButton = new InputLockButton(leftPos + 7, topPos + 17, 20, 20, button -> {
             Balm.getNetworking().sendToServer(new SetInputLockMessage(!menu.isLockedInputs()));
             menu.setLockedInputs(!menu.isLockedInputs());
         }, menu);
