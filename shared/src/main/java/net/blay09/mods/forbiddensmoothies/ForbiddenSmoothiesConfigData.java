@@ -11,7 +11,7 @@ public class ForbiddenSmoothiesConfigData implements BalmConfigData {
     public Printer printer = new Printer();
     public Blender blender = new Blender();
 
-    public class Printer {
+    public static class Printer {
         @Synced
         @Comment("The maximum amount of energy the printer can store.")
         public int maxEnergy = 32000;
@@ -21,10 +21,21 @@ public class ForbiddenSmoothiesConfigData implements BalmConfigData {
         public int energyPerTick = 20;
 
         @Synced
-        @Comment("The amount of ticks it takes to process a recipe.")
+        @Comment("The amount of ticks the printer takes to process a recipe.")
         public int processingTicks = 40;
     }
 
-    public class Blender {
+    public static class Blender {
+        @Synced
+        @Comment("The maximum amount of energy the blender can store.")
+        public int maxEnergy = 32000;
+
+        @Synced
+        @Comment("The amount of energy the blender consumes per tick.")
+        public int energyPerTick = 20;
+
+        @Synced
+        @Comment("The amount of ticks the blender takes to process a recipe.")
+        public int processingTicks = 40;
     }
 }
