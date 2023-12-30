@@ -95,7 +95,7 @@ public class PrinterRecipe implements Recipe<Container>, WeightedEntry {
             final var ingredients = itemsFromJson(GsonHelper.getAsJsonArray(jsonObject, "ingredients"));
             if (ingredients.isEmpty()) {
                 throw new JsonParseException("No ingredients for printer recipe");
-            } else if (ingredients.size() > 4) {
+            } else if (ingredients.size() > 8) {
                 throw new JsonParseException("Too many ingredients for printer recipe");
             } else {
                 final var resultItem = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(jsonObject, "result"));
