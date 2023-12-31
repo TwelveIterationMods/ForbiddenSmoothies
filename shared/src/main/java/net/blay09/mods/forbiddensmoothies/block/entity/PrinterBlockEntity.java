@@ -53,6 +53,10 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
 
         @Override
         public boolean canPlaceItem(int slot, ItemStack itemStack) {
+            if (outputContainer.containsOuterSlot(slot)) {
+                return false;
+            }
+
             if (getItem(slot).isEmpty() && lockedInputs) {
                 return false;
             }
@@ -228,5 +232,9 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     @Override
     public EnergyStorage getEnergyStorage() {
         return energyStorage;
+    }
+
+    public Container getInputContainer() {
+        return inputContainer;
     }
 }

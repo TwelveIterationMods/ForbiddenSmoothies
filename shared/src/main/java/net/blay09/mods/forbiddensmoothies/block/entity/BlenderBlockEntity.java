@@ -53,6 +53,10 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
 
         @Override
         public boolean canPlaceItem(int slot, ItemStack itemStack) {
+            if (outputContainer.containsOuterSlot(slot)) {
+                return false;
+            }
+
             if (getItem(slot).isEmpty() && lockedInputs) {
                 return false;
             }
@@ -172,6 +176,8 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     }
 
     public void serverTick() {
+        transferOutputs();
+
         final var recipe = selectRecipe(randomSource).orElse(null);
         maxProgress = getTotalProcessingTicks();
         energyCostPerTick = recipe != null ? determineEnergyCostPerTick() : 0;
@@ -196,6 +202,26 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         } else {
             progress = 0;
             energyCostPerTick = 0;
+        }
+    }
+
+    private void transferOutputs() {
+        if (level == null) {
+            return;
+        }
+
+        final var blockEntityBelow = level.getBlockEntity(worldPosition.below());
+        if (blockEntityBelow instanceof PrinterBlockEntity printer) {
+            for (int i = 0; i < outputContainer.getContainerSize(); i++) {
+                final var slotStack = outputContainer.getItem(i);
+                if (!slotStack.isEmpty()) {
+                    final var rest = ContainerUtils.insertItemStacked(printer.getInputContainer(), slotStack, false);
+                    outputContainer.setItem(i, rest);
+                    if (!rest.isEmpty()) {
+                        break;
+                    }
+                }
+            }
         }
     }
 
