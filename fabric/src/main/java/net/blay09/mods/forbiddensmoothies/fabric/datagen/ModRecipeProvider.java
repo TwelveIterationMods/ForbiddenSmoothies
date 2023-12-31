@@ -21,13 +21,24 @@ public class ModRecipeProvider extends FabricRecipeProvider {
     public void buildRecipes(Consumer<FinishedRecipe> exporter) {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.printer)
                 .pattern("ICI")
-                .pattern("ILI")
+                .pattern("GLG")
                 .pattern("IRI")
                 .define('C', Items.COPPER_INGOT)
+                .define('G', Items.GLASS_PANE)
                 .define('I', Items.IRON_INGOT)
                 .define('L', Items.LIGHTNING_ROD)
                 .define('R', Items.REDSTONE)
                 .unlockedBy("has_redstone", has(Items.REDSTONE))
+                .save(exporter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.blender)
+                .pattern("III")
+                .pattern("GFG")
+                .pattern("III")
+                .define('G', Items.GLASS_PANE)
+                .define('I', Items.IRON_INGOT)
+                .define('F', Items.FLINT)
+                .unlockedBy("has_flint", has(Items.FLINT))
                 .save(exporter);
     }
 }
