@@ -3,19 +3,30 @@ package net.blay09.mods.forbiddensmoothies.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blay09.mods.forbiddensmoothies.block.CustomBlockStateProperties;
 import net.blay09.mods.forbiddensmoothies.block.entity.BlenderBlockEntity;
+import net.blay09.mods.forbiddensmoothies.client.ModModels;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.util.RandomSource;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 
 public class BlenderRenderer implements BlockEntityRenderer<BlenderBlockEntity> {
+
+    private static final RandomSource random = RandomSource.create();
 
     public BlenderRenderer(BlockEntityRendererProvider.Context context) {
     }
 
     @Override
     public void render(BlenderBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlayIn) {
+        final var level = blockEntity.getLevel();
+        if (level == null) {
+            return;
+        }
+
         final var state = blockEntity.getBlockState();
         if (state.hasProperty(CustomBlockStateProperties.UGLY) && state.getValue(CustomBlockStateProperties.UGLY)) {
             return;
@@ -52,6 +63,25 @@ public class BlenderRenderer implements BlockEntityRenderer<BlenderBlockEntity> 
             }
             poseStack.popPose();
         }
+        poseStack.popPose();
+
+        final var dispatcher = Minecraft.getInstance().getBlockRenderer();
+        poseStack.pushPose();
+        final var speedBlade = 0.5f;
+        poseStack.translate(0.5f, 0, 0.5f);
+        poseStack.mulPose(new Quaternionf(new AxisAngle4f(animationTime * speedBlade, 0f, 1f, 0f)));
+        poseStack.translate(-0.5f, 0, -0.5f);
+        dispatcher.getModelRenderer()
+                .tesselateBlock(level,
+                        ModModels.blenderBlade.get(),
+                        blockEntity.getBlockState(),
+                        blockEntity.getBlockPos(),
+                        poseStack,
+                        buffer.getBuffer(RenderType.solid()),
+                        false,
+                        random,
+                        0,
+                        0);
         poseStack.popPose();
     }
 

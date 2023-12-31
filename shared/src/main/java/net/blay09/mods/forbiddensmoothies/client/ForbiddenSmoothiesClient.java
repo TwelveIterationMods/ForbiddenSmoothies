@@ -6,5 +6,6 @@ public class ForbiddenSmoothiesClient {
     public static void initialize() {
         ModRenderers.initialize(BalmClient.getRenderers());
         ModScreens.initialize(BalmClient.getScreens());
+        ModModels.initialize(BalmClient.getModels());
     }
 }
