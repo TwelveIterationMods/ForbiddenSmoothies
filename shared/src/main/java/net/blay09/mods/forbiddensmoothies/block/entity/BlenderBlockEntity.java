@@ -36,6 +36,8 @@ import java.util.Optional;
 
 public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvider, BalmContainerProvider, BalmEnergyStorageProvider {
 
+    private static final int SYNC_INTERVAL = 20;
+
     public static final int DATA_PROGRESS = 0;
     public static final int DATA_MAX_PROGRESS = 1;
     public static final int DATA_LOCKED_INPUTS = 2;
@@ -98,6 +100,9 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     private int progress;
     private int maxProgress;
     private int energyCostPerTick;
+    private boolean dirtyForSync;
+    private int ticksSinceLastSync;
+    private float animationTicks;
 
     protected final ContainerData dataAccess = new ContainerData() {
         public int get(int i) {
@@ -150,7 +155,9 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         super.load(tag);
 
         container.deserialize(tag.getCompound("Items"));
-        energyStorage.deserialize(tag.get("Energy"));
+        if (tag.contains("Energy")) {
+            energyStorage.deserialize(tag.get("Energy"));
+        }
         progress = tag.getInt("Progress");
         maxProgress = tag.getInt("MaxProgress");
         lockedInputs = tag.getBoolean("LockedInputs");
@@ -166,6 +173,14 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     }
 
     @Override
+    protected void writeUpdateTag(CompoundTag tag) {
+        super.writeUpdateTag(tag);
+        tag.put("Items", container.serialize());
+        tag.putInt("Progress", this.progress);
+        tag.putInt("MaxProgress", this.maxProgress);
+    }
+
+    @Override
     public Container getContainer() {
         return container;
     }
@@ -176,6 +191,14 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     }
 
     public void serverTick() {
+        if (ticksSinceLastSync >= 20 && dirtyForSync) {
+            sync();
+            dirtyForSync = false;
+            ticksSinceLastSync = 0;
+        } else {
+            ticksSinceLastSync++;
+        }
+
         transferOutputs();
 
         final var recipe = selectRecipe(randomSource).orElse(null);
@@ -254,5 +277,20 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     @Override
     public EnergyStorage getEnergyStorage() {
         return energyStorage;
+    }
+
+    public Container getInputContainer() {
+        return inputContainer;
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        dirtyForSync = true;
+    }
+
+    public float animate(float partialTicks) {
+        animationTicks += partialTicks;
+        return animationTicks;
     }
 }
