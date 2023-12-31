@@ -5,6 +5,7 @@ import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.container.BalmContainerProvider;
 import net.blay09.mods.forbiddensmoothies.block.entity.BlenderBlockEntity;
 import net.blay09.mods.forbiddensmoothies.block.entity.ModBlockEntities;
+import net.blay09.mods.forbiddensmoothies.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -34,6 +36,7 @@ public class BlenderBlock extends BaseEntityBlock {
 
     private static final VoxelShape SHAPE = box(3, 0, 3, 13, 16, 13);
     private static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    private static final BooleanProperty UGLY = CustomBlockStateProperties.UGLY;
 
     public BlenderBlock() {
         super(BlockBehaviour.Properties.of().sound(SoundType.METAL).strength(2.5f));
@@ -42,10 +45,15 @@ public class BlenderBlock extends BaseEntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
+        builder.add(UGLY);
     }
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rayTraceResult) {
+        if (player.getItemInHand(hand).is(ModItems.uglySteelPlating)) {
+            return InteractionResult.PASS;
+        }
+
         final var blockEntity = level.getBlockEntity(pos);
         if (!level.isClientSide && blockEntity instanceof BlenderBlockEntity blender) {
             if (player.getAbilities().instabuild && player.getItemInHand(InteractionHand.MAIN_HAND).is(Items.BAMBOO)) {
@@ -76,7 +84,7 @@ public class BlenderBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(UGLY, false);
     }
 
     @Override

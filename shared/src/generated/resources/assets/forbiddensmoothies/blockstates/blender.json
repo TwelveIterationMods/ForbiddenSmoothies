@@ -1,18 +1,33 @@
 {
   "variants": {
-    "facing=east": {
+    "facing=east,ugly=false": {
       "model": "forbiddensmoothies:block/blender",
       "y": 90
     },
-    "facing=north": {
+    "facing=east,ugly=true": {
+      "model": "forbiddensmoothies:block/blender_ugly",
+      "y": 90
+    },
+    "facing=north,ugly=false": {
       "model": "forbiddensmoothies:block/blender"
     },
-    "facing=south": {
+    "facing=north,ugly=true": {
+      "model": "forbiddensmoothies:block/blender_ugly"
+    },
+    "facing=south,ugly=false": {
       "model": "forbiddensmoothies:block/blender",
       "y": 180
     },
-    "facing=west": {
+    "facing=south,ugly=true": {
+      "model": "forbiddensmoothies:block/blender_ugly",
+      "y": 180
+    },
+    "facing=west,ugly=false": {
       "model": "forbiddensmoothies:block/blender",
+      "y": 270
+    },
+    "facing=west,ugly=true": {
+      "model": "forbiddensmoothies:block/blender_ugly",
       "y": 270
     }
   }

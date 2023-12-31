@@ -1,0 +1,6 @@
+{
+	"parent": "forbiddensmoothies:block/blender",
+	"textures": {
+		"0": "forbiddensmoothies:block/blender_ugly"
+	}
+}

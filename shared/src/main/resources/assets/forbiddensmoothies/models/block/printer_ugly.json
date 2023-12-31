@@ -1,0 +1,6 @@
+{
+	"parent": "forbiddensmoothies:block/printer",
+	"textures": {
+		"0": "forbiddensmoothies:block/printer_ugly"
+	}
+}

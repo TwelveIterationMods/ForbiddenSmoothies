@@ -1,6 +1,7 @@
 {
   "block.forbiddensmoothies.blender": "Blender",
   "block.forbiddensmoothies.printer": "Printer",
+  "item.forbiddensmoothies.ugly_steel_plating": "Ugly Steel Plating",
   "container.forbiddensmoothies.blender": "Blender",
   "container.forbiddensmoothies.printer": "Printer",
   "itemGroup.forbiddensmoothies.forbiddensmoothies": "Forbidden Smoothies",
@@ -9,5 +10,6 @@
   "tooltip.forbiddensmoothies.unlockInputs": "Unlock Input Slots",
   "tooltip.forbiddensmoothies.energyStored": "%d FE",
   "tooltip.forbiddensmoothies.energyConsumed": "Consuming %d FE/t",
+  "tooltip.forbiddensmoothies.ugly_steel_plating": "Apply to a Blender or Printer to make it ugly.",
   "config.forbiddensmoothies": "Forbidden Smoothies"
 }

@@ -161,6 +161,7 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         progress = tag.getInt("Progress");
         maxProgress = tag.getInt("MaxProgress");
         lockedInputs = tag.getBoolean("LockedInputs");
+        energyCostPerTick = tag.getInt("EnergyCostPerTick");
     }
 
     protected void saveAdditional(CompoundTag tag) {
@@ -176,8 +177,7 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     protected void writeUpdateTag(CompoundTag tag) {
         super.writeUpdateTag(tag);
         tag.put("Items", container.serialize());
-        tag.putInt("Progress", this.progress);
-        tag.putInt("MaxProgress", this.maxProgress);
+        tag.putInt("EnergyCostPerTick", energyCostPerTick);
     }
 
     @Override
@@ -191,7 +191,7 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     }
 
     public void serverTick() {
-        if (ticksSinceLastSync >= 20 && dirtyForSync) {
+        if (ticksSinceLastSync >= 10 && dirtyForSync) {
             sync();
             dirtyForSync = false;
             ticksSinceLastSync = 0;
@@ -203,7 +203,11 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
 
         final var recipe = selectRecipe(randomSource).orElse(null);
         maxProgress = getTotalProcessingTicks();
+        final var lastEnergyCostPerTick = energyCostPerTick;
         energyCostPerTick = recipe != null ? determineEnergyCostPerTick() : 0;
+        if (lastEnergyCostPerTick != energyCostPerTick) {
+            dirtyForSync = true;
+        }
         if (recipe != null && canFitRecipeResults(recipe) && energyStorage.drain(energyCostPerTick, true) >= energyCostPerTick) {
             progress++;
             energyStorage.drain(energyCostPerTick, false);
@@ -290,7 +294,9 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     }
 
     public float animate(float partialTicks) {
-        animationTicks += partialTicks;
+        if (energyCostPerTick > 0) {
+            animationTicks += partialTicks;
+        }
         return animationTicks;
     }
 }

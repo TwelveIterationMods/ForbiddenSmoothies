@@ -1,6 +1,7 @@
 package net.blay09.mods.forbiddensmoothies.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.blay09.mods.forbiddensmoothies.block.CustomBlockStateProperties;
 import net.blay09.mods.forbiddensmoothies.block.entity.BlenderBlockEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -15,6 +16,11 @@ public class BlenderRenderer implements BlockEntityRenderer<BlenderBlockEntity> 
 
     @Override
     public void render(BlenderBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlayIn) {
+        final var state = blockEntity.getBlockState();
+        if (state.hasProperty(CustomBlockStateProperties.UGLY) && state.getValue(CustomBlockStateProperties.UGLY)) {
+            return;
+        }
+
         final var inputContainer = blockEntity.getInputContainer();
         poseStack.pushPose();
         final var itemScale = 0.2f;
@@ -30,7 +36,7 @@ public class BlenderRenderer implements BlockEntityRenderer<BlenderBlockEntity> 
         final var sinah = Math.sin(animationTime * speedH) * offsetH;
         for (int i = 0; i < inputContainer.getContainerSize(); i++) {
             poseStack.pushPose();
-            poseStack.translate(i * 0.2f - 0.5f, i * 0.2f - 0.5f, 0f);
+            poseStack.translate(i * 0.1f - 0.5f, i * 0.15f - 0.5f, i * 0.1f - 0.5f);
             double sinav = Math.sin(i * animationTime * speedV) * offsetV;
             if (i % 2 == 0) {
                 poseStack.translate(cosah, sinav, sinah);

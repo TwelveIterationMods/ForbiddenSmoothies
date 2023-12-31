@@ -5,7 +5,7 @@
 	"textures": {
 		"0": "forbiddensmoothies:block/blender_glass",
 		"1": "forbiddensmoothies:block/blender_frame",
-		"particle": "forbiddensmoothies:block/printer_glass"
+		"particle": "forbiddensmoothies:block/blender_frame"
 	},
 	"elements": [
 		{

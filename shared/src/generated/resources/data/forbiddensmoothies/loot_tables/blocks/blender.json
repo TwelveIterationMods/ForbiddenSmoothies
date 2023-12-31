@@ -15,6 +15,25 @@
         }
       ],
       "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "forbiddensmoothies:blender",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "ugly": "true"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "forbiddensmoothies:ugly_steel_plating"
+        }
+      ],
+      "rolls": 1.0
     }
   ]
 }

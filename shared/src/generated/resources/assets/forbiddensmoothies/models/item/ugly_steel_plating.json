@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "forbiddensmoothies:item/ugly_steel_plating"
+  }
+}
