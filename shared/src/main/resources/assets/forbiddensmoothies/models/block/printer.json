@@ -4,7 +4,9 @@
 	"render_type": "cutout",
 	"textures": {
 		"0": "forbiddensmoothies:block/printer_glass",
-		"1": "forbiddensmoothies:block/printer_frame"
+		"1": "forbiddensmoothies:block/printer_frame",
+		"2": "forbiddensmoothies:block/printer_frame_top",
+		"particle": "forbiddensmoothies:block/printer_frame"
 	},
 	"elements": [
 		{
@@ -31,7 +33,7 @@
 				"east": {"uv": [0, 0, 16, 2], "texture": "#1"},
 				"south": {"uv": [0, 0, 16, 2], "texture": "#1"},
 				"west": {"uv": [0, 0, 16, 2], "texture": "#1"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#1"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#2"},
 				"down": {"uv": [0, 0, 16, 16], "texture": "#1"}
 			}
 		},

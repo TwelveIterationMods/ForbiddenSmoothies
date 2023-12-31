@@ -14,7 +14,7 @@ public class ModModelGenerator extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
         blockStateModelGenerator.createNonTemplateHorizontalBlock(ModBlocks.printer);
-        blockStateModelGenerator.createGenericCube(ModBlocks.blender);
+        blockStateModelGenerator.createNonTemplateHorizontalBlock(ModBlocks.blender);
     }
 
     @Override
