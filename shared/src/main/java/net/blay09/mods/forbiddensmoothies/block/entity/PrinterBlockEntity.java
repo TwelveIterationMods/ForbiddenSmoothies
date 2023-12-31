@@ -15,7 +15,6 @@ import net.blay09.mods.forbiddensmoothies.menu.ModMenus;
 import net.blay09.mods.forbiddensmoothies.menu.PrinterMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -35,6 +34,8 @@ import java.util.Optional;
 
 
 public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvider, BalmContainerProvider, BalmEnergyStorageProvider {
+
+    private static final int SYNC_INTERVAL = 10;
 
     public static final int DATA_PROGRESS = 0;
     public static final int DATA_MAX_PROGRESS = 1;
@@ -99,6 +100,12 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     private int maxProgress;
     private int energyCostPerTick;
 
+    private boolean dirtyForSync;
+    private int ticksSinceLastSync;
+
+    private PrinterRecipe currentRecipe;
+    private ItemStack currentResultItem = ItemStack.EMPTY;
+
     protected final ContainerData dataAccess = new ContainerData() {
         public int get(int i) {
             return switch (i) {
@@ -150,10 +157,16 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         super.load(tag);
 
         container.deserialize(tag.getCompound("Items"));
-        energyStorage.deserialize(tag.get("Energy"));
+        if (tag.contains("Energy")) {
+            energyStorage.deserialize(tag.get("Energy"));
+        }
         progress = tag.getInt("Progress");
         maxProgress = tag.getInt("MaxProgress");
         lockedInputs = tag.getBoolean("LockedInputs");
+
+        if (tag.contains("CurrentResultItem")) {
+            currentResultItem = ItemStack.of(tag.getCompound("CurrentResultItem"));
+        }
     }
 
     protected void saveAdditional(CompoundTag tag) {
@@ -163,6 +176,11 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         tag.putInt("Progress", this.progress);
         tag.putInt("MaxProgress", this.maxProgress);
         tag.putBoolean("LockedInputs", this.lockedInputs);
+    }
+
+    @Override
+    protected void writeUpdateTag(CompoundTag tag) {
+        tag.put("CurrentResultItem", currentResultItem.save(new CompoundTag()));
     }
 
     @Override
@@ -176,16 +194,38 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     }
 
     public void serverTick() {
-        final var recipe = selectRecipe(randomSource).orElse(null);
+        if (ticksSinceLastSync >= SYNC_INTERVAL && dirtyForSync) {
+            sync();
+            dirtyForSync = false;
+            ticksSinceLastSync = 0;
+        } else {
+            ticksSinceLastSync++;
+        }
+
         maxProgress = getTotalProcessingTicks();
+
+        final var lastRecipe = currentRecipe;
+        final var recipe = selectRecipe(randomSource, currentRecipe).orElse(null);
+        if (lastRecipe != recipe) {
+            dirtyForSync = true;
+        }
+
+        currentRecipe = recipe;
+        currentResultItem = recipe != null ? recipe.getResultItem(level.registryAccess()) : ItemStack.EMPTY;
+
+        final var lastEnergyCostPerTick = energyCostPerTick;
         energyCostPerTick = recipe != null ? determineEnergyCostPerTick() : 0;
+        if (lastEnergyCostPerTick != energyCostPerTick) {
+            dirtyForSync = true;
+        }
+
         if (recipe != null && canFitRecipeResults(recipe) && energyStorage.drain(energyCostPerTick, true) >= energyCostPerTick) {
             progress++;
             energyStorage.drain(energyCostPerTick, false);
 
             if (progress >= maxProgress) {
                 progress = 0;
-                final var output = recipe.assemble(recipeInputContainer, RegistryAccess.EMPTY);
+                final var output = recipe.assemble(recipeInputContainer, level.registryAccess());
                 for (final var ingredient : recipe.getIngredients()) {
                     for (int i = 0; i < recipeInputContainer.getContainerSize(); i++) {
                         final var slotStack = recipeInputContainer.getItem(i);
@@ -196,6 +236,8 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
                     }
                 }
                 ContainerUtils.insertItemStacked(outputContainer, output, false);
+                currentRecipe = null;
+                currentResultItem = ItemStack.EMPTY;
             }
         } else {
             progress = 0;
@@ -220,9 +262,13 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         return rest.isEmpty();
     }
 
-    private Optional<PrinterRecipe> selectRecipe(RandomSource random) {
+    private Optional<PrinterRecipe> selectRecipe(RandomSource random, @Nullable PrinterRecipe currentRecipe) {
         if (level == null) {
             return Optional.empty();
+        }
+
+        if (currentRecipe != null && currentRecipe.matches(recipeInputContainer, level)) {
+            return Optional.of(currentRecipe);
         }
 
         final var availableRecipes = level.getRecipeManager().getRecipesFor(ModRecipes.printerRecipeType, recipeInputContainer, level);
@@ -236,5 +282,15 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
 
     public Container getInputContainer() {
         return inputContainer;
+    }
+
+    public ItemStack getCurrentResultItem() {
+        return currentResultItem;
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        dirtyForSync = true;
     }
 }

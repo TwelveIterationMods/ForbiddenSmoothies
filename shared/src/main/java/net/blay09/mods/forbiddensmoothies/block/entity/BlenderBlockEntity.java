@@ -11,6 +11,7 @@ import net.blay09.mods.balm.common.BalmBlockEntity;
 import net.blay09.mods.forbiddensmoothies.ForbiddenSmoothiesConfig;
 import net.blay09.mods.forbiddensmoothies.crafting.BlenderRecipe;
 import net.blay09.mods.forbiddensmoothies.crafting.ModRecipes;
+import net.blay09.mods.forbiddensmoothies.crafting.PrinterRecipe;
 import net.blay09.mods.forbiddensmoothies.menu.BlenderMenu;
 import net.blay09.mods.forbiddensmoothies.menu.ModMenus;
 import net.minecraft.core.BlockPos;
@@ -36,7 +37,7 @@ import java.util.Optional;
 
 public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvider, BalmContainerProvider, BalmEnergyStorageProvider {
 
-    private static final int SYNC_INTERVAL = 20;
+    private static final int SYNC_INTERVAL = 10;
 
     public static final int DATA_PROGRESS = 0;
     public static final int DATA_MAX_PROGRESS = 1;
@@ -100,8 +101,12 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     private int progress;
     private int maxProgress;
     private int energyCostPerTick;
+
+    private BlenderRecipe currentRecipe;
+
     private boolean dirtyForSync;
     private int ticksSinceLastSync;
+
     private float animationTicks;
     private float animationEndingTicks;
 
@@ -192,7 +197,7 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     }
 
     public void serverTick() {
-        if (ticksSinceLastSync >= 10 && dirtyForSync) {
+        if (ticksSinceLastSync >= SYNC_INTERVAL && dirtyForSync) {
             sync();
             dirtyForSync = false;
             ticksSinceLastSync = 0;
@@ -202,21 +207,23 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
 
         transferOutputs();
 
-        final var recipe = selectRecipe(randomSource).orElse(null);
         maxProgress = getTotalProcessingTicks();
+        currentRecipe = selectRecipe(randomSource, this.currentRecipe).orElse(null);
+
         final var lastEnergyCostPerTick = energyCostPerTick;
-        energyCostPerTick = recipe != null ? determineEnergyCostPerTick() : 0;
+        energyCostPerTick = currentRecipe != null ? determineEnergyCostPerTick() : 0;
         if (lastEnergyCostPerTick != energyCostPerTick) {
             dirtyForSync = true;
         }
-        if (recipe != null && canFitRecipeResults(recipe) && energyStorage.drain(energyCostPerTick, true) >= energyCostPerTick) {
+
+        if (currentRecipe != null && canFitRecipeResults(currentRecipe) && energyStorage.drain(energyCostPerTick, true) >= energyCostPerTick) {
             progress++;
             energyStorage.drain(energyCostPerTick, false);
 
             if (progress >= maxProgress) {
                 progress = 0;
-                final var output = recipe.assemble(recipeInputContainer, RegistryAccess.EMPTY);
-                for (final var ingredient : recipe.getIngredients()) {
+                final var output = currentRecipe.assemble(recipeInputContainer, level.registryAccess());
+                for (final var ingredient : currentRecipe.getIngredients()) {
                     for (int i = 0; i < recipeInputContainer.getContainerSize(); i++) {
                         final var slotStack = recipeInputContainer.getItem(i);
                         if (ingredient.test(slotStack)) {
@@ -226,6 +233,7 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
                     }
                 }
                 ContainerUtils.insertItemStacked(outputContainer, output, false);
+                currentRecipe = null;
             }
         } else {
             progress = 0;
@@ -270,9 +278,13 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         return rest.isEmpty();
     }
 
-    private Optional<BlenderRecipe> selectRecipe(RandomSource random) {
+    private Optional<BlenderRecipe> selectRecipe(RandomSource random, @Nullable BlenderRecipe currentRecipe) {
         if (level == null) {
             return Optional.empty();
+        }
+
+        if (currentRecipe != null && currentRecipe.matches(recipeInputContainer, level)) {
+            return Optional.of(currentRecipe);
         }
 
         final var availableRecipes = level.getRecipeManager().getRecipesFor(ModRecipes.blenderRecipeType, recipeInputContainer, level);

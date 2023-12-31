@@ -1,0 +1,46 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "forbiddensmoothies:block/printer_easel",
+		"particle": "forbiddensmoothies:block/printer_easel"
+	},
+	"elements": [
+		{
+			"from": [5, 0, 9],
+			"to": [6, 8, 9.5],
+			"faces": {
+				"north": {"uv": [14, 8, 15, 16], "texture": "#0"},
+				"east": {"uv": [14, 8, 14.5, 16], "texture": "#0"},
+				"south": {"uv": [14, 0, 15, 8], "texture": "#0"},
+				"west": {"uv": [14, 0, 14.5, 8], "texture": "#0"},
+				"up": {"uv": [0, 0, 1, 0.5], "texture": "#0"},
+				"down": {"uv": [14, 0, 15, 0.5], "texture": "#0"}
+			}
+		},
+		{
+			"from": [9, 0, 9],
+			"to": [10, 8, 9.5],
+			"faces": {
+				"north": {"uv": [14, 8, 15, 16], "texture": "#0"},
+				"east": {"uv": [14, 8, 14.5, 16], "texture": "#0"},
+				"south": {"uv": [14, 0, 15, 8], "texture": "#0"},
+				"west": {"uv": [14, 0, 14.5, 8], "texture": "#0"},
+				"up": {"uv": [0, 0, 1, 0.5], "texture": "#0"},
+				"down": {"uv": [14, 0, 15, 0.5], "texture": "#0"}
+			}
+		},
+		{
+			"from": [4, 4, 5],
+			"to": [11, 14, 6],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [0, 0, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 7, 10], "texture": "#0"},
+				"east": {"uv": [0, 0, 1, 10], "texture": "#0"},
+				"south": {"uv": [0, 0, 7, 10], "texture": "#0"},
+				"west": {"uv": [0, 0, 1, 10], "texture": "#0"},
+				"up": {"uv": [0, 0, 7, 1], "texture": "#0"},
+				"down": {"uv": [0, 0, 7, 1], "texture": "#0"}
+			}
+		}
+	]
+}
