@@ -103,6 +103,7 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     private boolean dirtyForSync;
     private int ticksSinceLastSync;
     private float animationTicks;
+    private float animationEndingTicks;
 
     protected final ContainerData dataAccess = new ContainerData() {
         public int get(int i) {
@@ -296,7 +297,15 @@ public class BlenderBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     public float animate(float partialTicks) {
         if (energyCostPerTick > 0) {
             animationTicks += partialTicks;
+            animationEndingTicks = 0f;
         }
         return animationTicks;
+    }
+
+    public float animateEnding(float partialTicks) {
+        if (energyCostPerTick <= 0) {
+            animationEndingTicks += partialTicks;
+        }
+        return animationEndingTicks;
     }
 }

@@ -35,9 +35,12 @@ public class BlenderRenderer implements BlockEntityRenderer<BlenderBlockEntity> 
         final var inputContainer = blockEntity.getInputContainer();
         poseStack.pushPose();
         final var itemScale = 0.2f;
-        poseStack.translate(0.5f, 0.5f, 0.5f);
+        poseStack.translate(0.5f, 0f, 0.5f);
         poseStack.scale(itemScale, itemScale, itemScale);
         final var animationTime = blockEntity.animate(partialTicks);
+        final var endingTime = blockEntity.animateEnding(partialTicks);
+        final var x = Math.min(1f, endingTime / 25f);
+        final var endingProgress = x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
         final var offsetH = 0.5f;
         final var offsetV = 0.5f;
         final var speedH = 0.2f;
@@ -47,13 +50,14 @@ public class BlenderRenderer implements BlockEntityRenderer<BlenderBlockEntity> 
         final var sinah = Math.sin(animationTime * speedH) * offsetH;
         for (int i = 0; i < inputContainer.getContainerSize(); i++) {
             poseStack.pushPose();
-            poseStack.translate(i * 0.1f - 0.5f, i * 0.15f - 0.5f, i * 0.1f - 0.5f);
-            double sinav = Math.sin(i * animationTime * speedV) * offsetV;
-            if (i % 2 == 0) {
-                poseStack.translate(cosah, sinav, sinah);
-            } else {
-                poseStack.translate(sinah, sinav, cosah);
-            }
+            final var alt = i % 2 == 0;
+            final var sinav = Math.sin(i * animationTime * speedV) * offsetV;
+            final var tx = i * 0.1f - 0.5f + (alt ? cosah : sinah);
+            final var tz = i * 0.1f - 0.5f + (alt ? sinah : cosah);
+            final var swirly = 0.5f / itemScale + i * 0.15f - 0.5f + sinav;
+            final var groundy = 0.2 / itemScale;
+            final var ty = swirly + (groundy - swirly) * endingProgress;
+            poseStack.translate(tx, ty, tz);
             final var angle = (float) ((i + 1) * Math.PI * 2 / inputContainer.getContainerSize() + animationTime * angleSpeed);
             poseStack.mulPose(new Quaternionf(new AxisAngle4f(angle, 0f, 1f, 0f)));
 
@@ -68,8 +72,12 @@ public class BlenderRenderer implements BlockEntityRenderer<BlenderBlockEntity> 
         final var dispatcher = Minecraft.getInstance().getBlockRenderer();
         poseStack.pushPose();
         final var speedBlade = 0.5f;
+        final var bladeEndingProgress = Math.min(1f, endingTime / 120f);
+        final var bladeEndingMaxAngle = (float) Math.PI;
+        final var bladeEasingFactor = bladeEndingProgress * (2 - bladeEndingProgress);
+        final var bladeEndingAngle = bladeEasingFactor * bladeEndingMaxAngle;
         poseStack.translate(0.5f, 0, 0.5f);
-        poseStack.mulPose(new Quaternionf(new AxisAngle4f(animationTime * speedBlade, 0f, 1f, 0f)));
+        poseStack.mulPose(new Quaternionf(new AxisAngle4f(animationTime * speedBlade + bladeEndingAngle, 0f, 1f, 0f)));
         poseStack.translate(-0.5f, 0, -0.5f);
         dispatcher.getModelRenderer()
                 .tesselateBlock(level,
