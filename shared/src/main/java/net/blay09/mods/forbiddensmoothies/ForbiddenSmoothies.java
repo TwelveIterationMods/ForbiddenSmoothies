@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 public class ForbiddenSmoothies {
 
-    // TODO fancy in-world rendering for printer
     // TODO better textures for the models
 
     // TODO Slightly different blender UI?

@@ -169,6 +169,8 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         if (tag.contains("CurrentResultItem")) {
             currentResultItem = ItemStack.of(tag.getCompound("CurrentResultItem"));
         }
+
+        energyCostPerTick = tag.getInt("EnergyCostPerTick");
     }
 
     protected void saveAdditional(CompoundTag tag) {
@@ -183,6 +185,7 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     @Override
     protected void writeUpdateTag(CompoundTag tag) {
         tag.put("CurrentResultItem", currentResultItem.save(new CompoundTag()));
+        tag.putInt("EnergyCostPerTick", energyCostPerTick);
     }
 
     @Override
@@ -297,7 +300,7 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     }
 
     public float animate(float partialTicks) {
-        if (energyCostPerTick > 0 || true) {
+        if (energyCostPerTick > 0) {
             animationTime += partialTicks;
         }
         return animationTime;

@@ -5,6 +5,7 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.blay09.mods.forbiddensmoothies.ForbiddenSmoothiesConfig;
 import net.blay09.mods.forbiddensmoothies.block.CustomBlockStateProperties;
 import net.blay09.mods.forbiddensmoothies.block.entity.PrinterBlockEntity;
 import net.blay09.mods.forbiddensmoothies.client.ModModels;
@@ -75,11 +76,16 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> 
                         0);
         poseStack.popPose();
 
+        final var animationTime = blockEntity.animate(partialTicks);
+        final var scaledAnimationTime = animationTime * 2;
+
         final var itemStack = blockEntity.getCurrentResultItem();
         poseStack.pushPose();
         poseStack.translate(0.5f, 0f, 0.5f);
         final var itemScale = 0.3f;
-        poseStack.translate(-0.08f, 0.43f, 0.115f);
+        poseStack.translate(-0.08f, 0.43f, 0.116f);
+        final var maxTime = ForbiddenSmoothiesConfig.getActive().printer.processingTicks + 20;
+        poseStack.translate(0f, 0, -(animationTime % maxTime) / (float) maxTime * 0.003f);
         poseStack.mulPose(new Quaternionf(new AxisAngle4f((float) Math.toRadians(22.5f), 1f, 0f, 0f)));
         poseStack.scale(itemScale, itemScale, 0.1f);
         final var itemRenderer = Minecraft.getInstance().getItemRenderer();
@@ -88,27 +94,25 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> 
         itemRenderer.render(itemStack, ItemDisplayContext.FIXED, false, poseStack, buffer, combinedLight, combinedOverlay, model);
         poseStack.popPose();
 
-        final var animationTime = blockEntity.animate(partialTicks);
-
         poseStack.pushPose();
         poseStack.translate(0.5f, 0f, 0.5f);
         poseStack.mulPose(new Quaternionf(new AxisAngle4f((float) Math.toRadians(180), 1f, 0f, 0f)));
-        poseStack.mulPose(new Quaternionf(new AxisAngle4f((float) Math.toRadians(120), 0f, 1f, 0f)));
-        poseStack.translate(-0.2f, -0.95f, 0.1f);
+        poseStack.mulPose(new Quaternionf(new AxisAngle4f((float) Math.toRadians(100), 0f, 1f, 0f)));
+        poseStack.translate(-0.2f, -0.95f, 0.18f);
         final var humanScale = 0.55f;
         poseStack.scale(humanScale, humanScale, humanScale);
         final GameProfile gameProfile = null; // TODO
         final var profileTexture = getPlayerSkin(gameProfile).orElse(null);
         final var playerModel = getPlayerModel(profileTexture);
         final var skinTexture = getPlayerSkinTexture(profileTexture);
-        playerModel.animate(animationTime);
+        playerModel.animate(scaledAnimationTime);
         playerModel.renderToBuffer(poseStack, buffer.getBuffer(RenderType.entitySolid(skinTexture)), combinedLight, combinedOverlay, 1f, 1f, 1f, 1f);
         poseStack.popPose();
 
         poseStack.pushPose();
         final var handItemScale = 0.3f;
         poseStack.translate(0.5f, 0f, 0.5f);
-        poseStack.translate(-0.08f, 0.4f, 0.06f);
+        poseStack.translate(0.025f, 0.4f, 0.06f);
         poseStack.mulPose(Axis.ZP.rotationDegrees(45f));
         poseStack.mulPose(Axis.YP.rotation(0.1f));
         final var originX = 0.1f;
@@ -117,7 +121,7 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> 
         poseStack.mulPose(Axis.YN.rotationDegrees(10));
         poseStack.mulPose(Axis.XP.rotationDegrees(15));
         poseStack.translate(originX, originY, originZ);
-        poseStack.mulPose(Axis.ZP.rotation((float) (-Math.sin(animationTime / 20f) * 0.5f - Math.toRadians(30f))));
+        poseStack.mulPose(Axis.ZP.rotation((float) (-Math.sin(scaledAnimationTime / 20f) * 0.5f - Math.toRadians(30f))));
         poseStack.translate(-originX, -originY, -originZ);
         poseStack.scale(handItemScale, handItemScale, handItemScale);
         final var handItem = new ItemStack(Items.BRUSH);

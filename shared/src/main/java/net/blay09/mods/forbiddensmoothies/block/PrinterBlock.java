@@ -1,6 +1,5 @@
 package net.blay09.mods.forbiddensmoothies.block;
 
-import com.google.common.collect.ImmutableMap;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.container.BalmContainerProvider;
 import net.blay09.mods.forbiddensmoothies.block.entity.ModBlockEntities;
@@ -32,8 +31,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 public class PrinterBlock extends BaseEntityBlock {
 
