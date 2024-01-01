@@ -85,7 +85,7 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> 
         final var itemRenderer = Minecraft.getInstance().getItemRenderer();
         final var model = itemRenderer.getModel(itemStack, level, null, 0);
         RenderSystem.enableBlend();
-        itemRenderer.render(itemStack, ItemDisplayContext.FIXED, false, poseStack, buffer, LightTexture.FULL_BLOCK, combinedOverlay, model);
+        itemRenderer.render(itemStack, ItemDisplayContext.FIXED, false, poseStack, buffer, combinedLight, combinedOverlay, model);
         poseStack.popPose();
 
         final var animationTime = blockEntity.animate(partialTicks);
@@ -94,7 +94,7 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> 
         poseStack.translate(0.5f, 0f, 0.5f);
         poseStack.mulPose(new Quaternionf(new AxisAngle4f((float) Math.toRadians(180), 1f, 0f, 0f)));
         poseStack.mulPose(new Quaternionf(new AxisAngle4f((float) Math.toRadians(120), 0f, 1f, 0f)));
-        poseStack.translate(-0.15f, -0.95f, 0.1f);
+        poseStack.translate(-0.2f, -0.95f, 0.1f);
         final var humanScale = 0.55f;
         poseStack.scale(humanScale, humanScale, humanScale);
         final GameProfile gameProfile = null; // TODO
@@ -102,10 +102,27 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> 
         final var playerModel = getPlayerModel(profileTexture);
         final var skinTexture = getPlayerSkinTexture(profileTexture);
         playerModel.animate(animationTime);
-        playerModel.renderToBuffer(poseStack, buffer.getBuffer(RenderType.entitySolid(skinTexture)), LightTexture.FULL_BLOCK, combinedOverlay, 1f, 1f, 1f, 1f);
+        playerModel.renderToBuffer(poseStack, buffer.getBuffer(RenderType.entitySolid(skinTexture)), combinedLight, combinedOverlay, 1f, 1f, 1f, 1f);
         poseStack.popPose();
 
-        playerModel.renderItemInHand(poseStack, buffer, LightTexture.FULL_BLOCK, combinedOverlay, level);
+        poseStack.pushPose();
+        final var handItemScale = 0.3f;
+        poseStack.translate(0.5f, 0f, 0.5f);
+        poseStack.translate(-0.08f, 0.4f, 0.06f);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(45f));
+        poseStack.mulPose(Axis.YP.rotation(0.1f));
+        final var originX = 0.1f;
+        final var originY = -0.1f;
+        final var originZ = 0.2f;
+        poseStack.mulPose(Axis.YN.rotationDegrees(10));
+        poseStack.mulPose(Axis.XP.rotationDegrees(15));
+        poseStack.translate(originX, originY, originZ);
+        poseStack.mulPose(Axis.ZP.rotation((float) (-Math.sin(animationTime / 20f) * 0.5f - Math.toRadians(30f))));
+        poseStack.translate(-originX, -originY, -originZ);
+        poseStack.scale(handItemScale, handItemScale, handItemScale);
+        final var handItem = new ItemStack(Items.BRUSH);
+        itemRenderer.renderStatic(handItem, ItemDisplayContext.FIXED, combinedLight, combinedOverlay, poseStack, buffer, level, 0);
+        poseStack.popPose();
 
         poseStack.popPose();
     }

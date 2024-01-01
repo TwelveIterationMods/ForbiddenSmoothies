@@ -23,7 +23,9 @@ public class TinyHumanModel extends PlayerModel<LivingEntity> {
         rightArm.xRot = 0.1f;
         leftLeg.xRot = -0.1f;
         leftArm.yRot = 0.1f;
+        leftArm.yRot = (float) (-Math.sin(animationTime / 20f) * 0.5f);
         leftArm.zRot = (float) (-Math.sin(animationTime / 20f) - Math.toRadians(50f));
+        leftArm.zRot = (float) (-Math.sin(0f / 20f) - Math.toRadians(50f));
         head.zRot =(float) (-Math.sin(animationTime / 40f)) * 0.1f;
         head.xRot =(float) (-Math.sin(animationTime / 60f)) * 0.05f;
         head.yRot =(float) (-Math.sin(animationTime / 30f)) * 0.05f;

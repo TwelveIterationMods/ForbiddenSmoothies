@@ -1,5 +1,6 @@
 package net.blay09.mods.forbiddensmoothies.block;
 
+import com.google.common.collect.ImmutableMap;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.container.BalmContainerProvider;
 import net.blay09.mods.forbiddensmoothies.block.entity.ModBlockEntities;
@@ -31,6 +32,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Function;
 
 public class PrinterBlock extends BaseEntityBlock {
 
@@ -115,30 +118,14 @@ public class PrinterBlock extends BaseEntityBlock {
                 (level, pos, state2, blockEntity) -> blockEntity.serverTick());
     }
 
-
     @Override
-    public VoxelShape getVisualShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+    public VoxelShape getOcclusionShape(BlockState $$0, BlockGetter $$1, BlockPos $$2) {
         return Shapes.empty();
     }
 
     @Override
-    public float getShadeBrightness(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-        return 1F;
-    }
-
-    @Override
-    public boolean propagatesSkylightDown(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-        return true;
-    }
-
-    @Override
-    public boolean useShapeForLightOcclusion(BlockState $$0) {
-        return false;
-    }
-
-    @Override
-    public int getLightBlock(BlockState $$0, BlockGetter $$1, BlockPos $$2) {
-        return 1;
+    public VoxelShape getVisualShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+        return Shapes.empty();
     }
 
 }
