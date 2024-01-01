@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.blay09.mods.forbiddensmoothies.block.CustomBlockStateProperties;
 import net.blay09.mods.forbiddensmoothies.block.entity.PrinterBlockEntity;
 import net.blay09.mods.forbiddensmoothies.client.ModModels;
@@ -15,11 +16,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.Nullable;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
@@ -49,6 +52,12 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> 
         if (state.hasProperty(CustomBlockStateProperties.UGLY) && state.getValue(CustomBlockStateProperties.UGLY)) {
             return;
         }
+
+        poseStack.pushPose();
+        final var facing = state.hasProperty(BlockStateProperties.HORIZONTAL_FACING) ? state.getValue(BlockStateProperties.HORIZONTAL_FACING) : Direction.NORTH;
+        poseStack.translate(0.5f, 0f, 0.5f);
+        poseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot() + 180f));
+        poseStack.translate(-0.5f, 0f, -0.5f);
 
         final var dispatcher = Minecraft.getInstance().getBlockRenderer();
         poseStack.pushPose();
@@ -97,6 +106,8 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> 
         poseStack.popPose();
 
         playerModel.renderItemInHand(poseStack, buffer, LightTexture.FULL_BLOCK, combinedOverlay, level);
+
+        poseStack.popPose();
     }
 
     private Optional<MinecraftProfileTexture> getPlayerSkin(@Nullable GameProfile gameProfile) {
