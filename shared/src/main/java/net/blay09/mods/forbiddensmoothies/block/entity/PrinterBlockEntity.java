@@ -106,6 +106,8 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     private PrinterRecipe currentRecipe;
     private ItemStack currentResultItem = ItemStack.EMPTY;
 
+    private float animationTime;
+
     protected final ContainerData dataAccess = new ContainerData() {
         public int get(int i) {
             return switch (i) {
@@ -292,5 +294,12 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     public void setChanged() {
         super.setChanged();
         dirtyForSync = true;
+    }
+
+    public float animate(float partialTicks) {
+        if (energyCostPerTick > 0 || true) {
+            animationTime += partialTicks;
+        }
+        return animationTime;
     }
 }

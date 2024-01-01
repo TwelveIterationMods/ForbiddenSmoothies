@@ -130,4 +130,15 @@ public class PrinterBlock extends BaseEntityBlock {
     public boolean propagatesSkylightDown(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
         return true;
     }
+
+    @Override
+    public boolean useShapeForLightOcclusion(BlockState $$0) {
+        return false;
+    }
+
+    @Override
+    public int getLightBlock(BlockState $$0, BlockGetter $$1, BlockPos $$2) {
+        return 1;
+    }
+
 }

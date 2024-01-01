@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemDisplayContext;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 
@@ -48,6 +49,7 @@ public class BlenderRenderer implements BlockEntityRenderer<BlenderBlockEntity> 
         final var angleSpeed = 0.25f;
         final var cosah = Math.cos(animationTime * speedH) * offsetH;
         final var sinah = Math.sin(animationTime * speedH) * offsetH;
+        final var itemRenderer = Minecraft.getInstance().getItemRenderer();
         for (int i = 0; i < inputContainer.getContainerSize(); i++) {
             poseStack.pushPose();
             final var alt = i % 2 == 0;
@@ -63,7 +65,7 @@ public class BlenderRenderer implements BlockEntityRenderer<BlenderBlockEntity> 
 
             final var itemStack = inputContainer.getItem(i);
             if (!itemStack.isEmpty()) {
-                RenderUtils.renderItem(itemStack, combinedLight, poseStack, buffer, blockEntity.getLevel());
+                itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, combinedLight, combinedOverlayIn, poseStack, buffer, level, 0);
             }
             poseStack.popPose();
         }
