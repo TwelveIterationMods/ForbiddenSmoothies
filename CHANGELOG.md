@@ -1,1 +1,1 @@
-- Initial Release
+- Added JEI support
