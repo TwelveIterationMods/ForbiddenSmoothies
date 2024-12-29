@@ -11,5 +11,7 @@
   "tooltip.forbiddensmoothies.energyStored": "%d FE",
   "tooltip.forbiddensmoothies.energyConsumed": "Consuming %d FE/t",
   "tooltip.forbiddensmoothies.ugly_steel_plating": "Apply to a Blender or Printer to make it ugly.",
+  "jei.forbiddensmoothies.printer": "Printer",
+  "jei.forbiddensmoothies.blender": "Blender",
   "config.forbiddensmoothies": "Forbidden Smoothies"
 }
