@@ -1,8 +1,8 @@
 name: publish-snapshot
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - '**'
 
 jobs:
   publish-snapshot:
@@ -11,7 +11,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        loader: [common, fabric, forge]
+        loader: [shared, fabric, forge]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
