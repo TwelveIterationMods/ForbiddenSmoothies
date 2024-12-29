@@ -4,8 +4,8 @@ Minecraft Mod. Adds a printer that creates resources out of input items such as 
 
 - [Modpack Permissions](https://mods.twelveiterations.com/permissions)
 
-[![Versions](http://cf.way2muchnoise.eu/versions/944327_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/forbidden-smoothies)
-[![Downloads](http://cf.way2muchnoise.eu/full_944327_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/forbidden-smoothies)
+[![Versions](http://cf.way2muchnoise.eu/versions/956081_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/forbidden-smoothies)
+[![Downloads](http://cf.way2muchnoise.eu/full_956081_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/forbidden-smoothies)
 
 
 ## Contributing
