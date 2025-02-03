@@ -7,8 +7,13 @@ import net.blay09.mods.forbiddensmoothies.menu.ModMenus;
 import net.blay09.mods.forbiddensmoothies.item.ModItems;
 import net.blay09.mods.forbiddensmoothies.network.ModNetworking;
 import net.blay09.mods.forbiddensmoothies.block.entity.ModBlockEntities;
+import net.blay09.mods.forbiddensmoothies.skin.SkinRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ForbiddenSmoothies {
+
+    public static final Logger logger = LoggerFactory.getLogger(ForbiddenSmoothies.class);
 
     public static final String MOD_ID = "forbiddensmoothies";
 
@@ -20,6 +25,8 @@ public class ForbiddenSmoothies {
         ModItems.initialize(Balm.getItems());
         ModMenus.initialize(Balm.getMenus());
         ModRecipes.initialize(Balm.getRecipes());
+
+        SkinRegistry.load();
     }
 
 }

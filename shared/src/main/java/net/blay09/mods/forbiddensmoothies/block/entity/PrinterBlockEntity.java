@@ -1,5 +1,9 @@
 package net.blay09.mods.forbiddensmoothies.block.entity;
 
+import com.google.common.collect.Iterables;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.container.BalmContainerProvider;
 import net.blay09.mods.balm.api.container.ContainerUtils;
 import net.blay09.mods.balm.api.container.DefaultContainer;
@@ -16,6 +20,7 @@ import net.blay09.mods.forbiddensmoothies.menu.PrinterMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,6 +33,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -106,6 +112,8 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
     private PrinterRecipe currentRecipe;
     private ItemStack currentResultItem = ItemStack.EMPTY;
 
+    private GameProfile customSkin;
+
     private float animationTime;
 
     protected final ContainerData dataAccess = new ContainerData() {
@@ -171,6 +179,10 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         }
 
         energyCostPerTick = tag.getInt("EnergyCostPerTick");
+
+        if (tag.contains("CustomSkin")) {
+            customSkin = NbtUtils.readGameProfile(tag.getCompound("CustomSkin"));
+        }
     }
 
     protected void saveAdditional(CompoundTag tag) {
@@ -180,12 +192,24 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         tag.putInt("Progress", this.progress);
         tag.putInt("MaxProgress", this.maxProgress);
         tag.putBoolean("LockedInputs", this.lockedInputs);
+
+        if (customSkin != null) {
+            final var customSkinTag = new CompoundTag();
+            NbtUtils.writeGameProfile(customSkinTag, customSkin);
+            tag.put("CustomSkin", customSkinTag);
+        }
     }
 
     @Override
     protected void writeUpdateTag(CompoundTag tag) {
         tag.put("CurrentResultItem", currentResultItem.save(new CompoundTag()));
         tag.putInt("EnergyCostPerTick", energyCostPerTick);
+
+        if (customSkin != null) {
+            final var customSkinTag = new CompoundTag();
+            NbtUtils.writeGameProfile(customSkinTag, customSkin);
+            tag.put("CustomSkin", customSkinTag);
+        }
     }
 
     @Override
@@ -305,4 +329,38 @@ public class PrinterBlockEntity extends BalmBlockEntity implements BalmMenuProvi
         }
         return animationTime;
     }
+
+    private void grabProfile() {
+        new Thread(() -> {
+            try {
+                if (!level.isClientSide && customSkin != null && !StringUtils.isEmpty(customSkin.getName())) {
+                    if (!customSkin.isComplete() || !customSkin.getProperties().containsKey("textures")) {
+                        Balm.getHooks().getServer().getProfileCache().get(customSkin.getName()).ifPresent(gameProfile -> {
+                            Property property = Iterables.getFirst(gameProfile.getProperties().get("textures"), null);
+                            if (property == null) {
+                                gameProfile = Balm.getHooks().getServer().getSessionService().fillProfileProperties(gameProfile, true);
+                            }
+                            customSkin = gameProfile;
+                            sync();
+                            setChanged();
+                        });
+                    }
+                }
+            } catch (Throwable ignored) {
+                // Yggdrasil can fail unexpectedly if the remote server has issues and Vanilla does not safeguard against it
+            }
+        }).start();
+    }
+
+    public void setCustomSkin(@Nullable GameProfile customSkin) {
+        this.customSkin = customSkin;
+        grabProfile();
+        sync();
+    }
+
+    @Nullable
+    public GameProfile getCustomSkin() {
+        return customSkin;
+    }
+
 }

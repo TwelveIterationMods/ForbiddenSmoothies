@@ -11,7 +11,6 @@ import net.blay09.mods.forbiddensmoothies.block.entity.PrinterBlockEntity;
 import net.blay09.mods.forbiddensmoothies.client.ModModels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -28,10 +27,13 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> {
 
+    private final Set<GameProfile> skinRequested = new HashSet<>();
     private static final RandomSource random = RandomSource.create();
 
     private final TinyHumanModel tinyHumanModel;
@@ -101,7 +103,12 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBlockEntity> 
         poseStack.translate(-0.2f, -0.95f, 0.18f);
         final var humanScale = 0.55f;
         poseStack.scale(humanScale, humanScale, humanScale);
-        final GameProfile gameProfile = null; // TODO
+        final var gameProfile = blockEntity.getCustomSkin();
+        if (gameProfile != null && !skinRequested.contains(gameProfile)) {
+            Minecraft.getInstance().getSkinManager().registerSkins(gameProfile, (typeIn, location, profileTexture) -> {
+            }, true);
+            skinRequested.add(gameProfile);
+        }
         final var profileTexture = getPlayerSkin(gameProfile).orElse(null);
         final var playerModel = getPlayerModel(profileTexture);
         final var skinTexture = getPlayerSkinTexture(profileTexture);
